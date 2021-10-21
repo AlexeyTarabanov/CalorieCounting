@@ -58,7 +58,7 @@ public class UserMealsUtil {
     // без фильтрации по времени
     // дополнительный вспомогательный метод
     // подает туда минимальное и максимальное время для того, чтобы там не происходила фильтрация
-    public static List<MealTo> getTos(List<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
@@ -68,6 +68,6 @@ public class UserMealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }
