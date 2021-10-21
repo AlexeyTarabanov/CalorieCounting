@@ -1,7 +1,7 @@
 package ru.alex.util;
 
 import ru.alex.model.Meal;
-import ru.alex.model.UserMealWithExcess;
+import ru.alex.model.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,13 +22,13 @@ public class UserMealsUtil {
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<MealTo> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
         System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
-    public static List<UserMealWithExcess> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO return filtered list with excess. Implement by cycles
 
         // считаем сумму калорий в день
@@ -43,43 +43,38 @@ public class UserMealsUtil {
             caloriesSumByDate.put(mealDate, caloriesSumByDate.getOrDefault(mealDate, 0) + userMealCalories);
         }
 
-        List<UserMealWithExcess> userMealWithExcesses = new ArrayList<>();
+        List<MealTo> mealTos = new ArrayList<>();
         for (Meal meal : meals) {
             // проверяем находится ли данный отрезок времени в промежутке м/у startTime и endTime
             if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
                 // получаем сумму каллорий
                 Integer numberOfCalories = caloriesSumByDate.get(meal.getDateTime().toLocalDate());
-                userMealWithExcesses.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(),
+                mealTos.add(new MealTo(meal.getDateTime(), meal.getDescription(),
                         meal.getCalories(), numberOfCalories > caloriesPerDay));
             }
         }
 
-        return userMealWithExcesses;
+        return mealTos;
     }
 
-    public static List<UserMealWithExcess> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-
-        Map<LocalDate, List<Meal>> listOfMealByDate = meals
-                .stream()
-                // получаем 2 даты и список еды с характеристиками
-                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate()));
-
+    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
         Map<LocalDate, Integer> caloriesSumByDate = meals
                 .stream()
-                .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(),
-                        // получаем 2 даты и количество каллорий за день
-                        Collectors.summingInt(Meal::getCalories)));
+                // получаем 2 даты и количество каллорий за день
+                .collect(Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories)));
 
-        List<UserMealWithExcess> userMealWithExcesses = meals
+
+        return meals
                 .stream()
                 .filter(meal ->
-                        TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
-                .map(meal -> new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
-                        caloriesSumByDate.get(meal.getDateTime().toLocalDate()) > caloriesPerDay))
+                        TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
+                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
 
-        return userMealWithExcesses;
+    }
+
+    private static MealTo createTo(Meal meal, boolean excess) {
+        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }
