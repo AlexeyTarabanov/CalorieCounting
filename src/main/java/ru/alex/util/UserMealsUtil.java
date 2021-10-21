@@ -10,6 +10,8 @@ import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.alex.util.TimeUtil.isBetweenHalfOpen;
+
 public class UserMealsUtil {
     public static void main(String[] args) {
         List<Meal> meals = Arrays.asList(
@@ -33,26 +35,20 @@ public class UserMealsUtil {
 
         // считаем сумму калорий в день
         Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
-        for (Meal meal : meals) {
-            // получаем дату
-            LocalDate mealDate = meal.getDateTime().toLocalDate();
-            // калории
-            int userMealCalories = meal.getCalories();
-            // по ключу-дате получаем калории,
-            // если такая дата там присутствует, то к ее значению прибавляем калории
-            caloriesSumByDate.put(mealDate, caloriesSumByDate.getOrDefault(mealDate, 0) + userMealCalories);
-        }
+        meals.forEach(meal ->
+                // merge (K, V, Function)
+                // если даты не существует или количество калорий равно нулю - добавляем пару key-value
+                // если дата существует и количество калорий НЕ равно нулю - метод меняет value на результат выполнения функции
+                // если Function возвращает null - key удаляется из коллекции.
+                caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), (a, b) -> Integer.sum(a, b)));
 
         List<MealTo> mealTos = new ArrayList<>();
-        for (Meal meal : meals) {
+        meals.forEach(meal ->  {
             // проверяем находится ли данный отрезок времени в промежутке м/у startTime и endTime
-            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
-                // получаем сумму каллорий
-                Integer numberOfCalories = caloriesSumByDate.get(meal.getDateTime().toLocalDate());
-                mealTos.add(new MealTo(meal.getDateTime(), meal.getDescription(),
-                        meal.getCalories(), numberOfCalories > caloriesPerDay));
+            if (isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
+                mealTos.add(createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay));
             }
-        }
+        });
 
         return mealTos;
     }
@@ -68,7 +64,7 @@ public class UserMealsUtil {
         return meals
                 .stream()
                 .filter(meal ->
-                        TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
+                        isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
 
