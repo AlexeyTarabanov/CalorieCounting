@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.alex.util.TimeUtil.isBetweenHalfOpen;
@@ -35,21 +36,24 @@ public class UserMealsUtil {
 
         // считаем сумму калорий в день
         Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
-        meals.forEach(meal ->
+        List<MealTo> mealTos = new ArrayList<>();
+        Predicate<Boolean> predicate = b -> true;
+
+        for (Meal meal : meals) {
                 // merge (K, V, Function)
                 // если даты не существует или количество калорий равно нулю - добавляем пару key-value
                 // если дата существует и количество калорий НЕ равно нулю - метод меняет value на результат выполнения функции
                 // если Function возвращает null - key удаляется из коллекции.
-                caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), (a, b) -> Integer.sum(a, b)));
+            caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), (a, b) -> Integer.sum(a, b));
 
-        List<MealTo> mealTos = new ArrayList<>();
-        meals.forEach(meal ->  {
             // проверяем находится ли данный отрезок времени в промежутке м/у startTime и endTime
             if (isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
-                mealTos.add(createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay));
+                predicate = predicate.and(b -> mealTos.add(createTo(meal,
+                        caloriesSumByDate.get(meal.getDate()) > caloriesPerDay)));
             }
-        });
+        }
 
+        predicate.test(true);
         return mealTos;
     }
 
