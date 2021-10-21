@@ -8,66 +8,63 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.alex.util.TimeUtil.isBetweenHalfOpen;
 
 public class UserMealsUtil {
-    public static void main(String[] args) {
-        List<Meal> meals = Arrays.asList(
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-        );
 
-        List<MealTo> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+    public static final int DEFAULT_CALORIES_PER_DAY = 2000;
+
+    public static final List<Meal> meals = Arrays.asList(
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
+    );
+
+    public static void main(String[] args) {
+
+        List<MealTo> mealsTo = getFilteredTos(meals, 2000, LocalTime.of(7, 0), LocalTime.of(12, 0));
         mealsTo.forEach(System.out::println);
 
-        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
-    public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
-
-        // считаем сумму калорий в день
-        Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
-        meals.forEach(meal ->
-                // merge (K, V, Function)
-                // если даты не существует или количество калорий равно нулю - добавляем пару key-value
-                // если дата существует и количество калорий НЕ равно нулю - метод меняет value на результат выполнения функции
-                // если Function возвращает null - key удаляется из коллекции.
-                caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), (a, b) -> Integer.sum(a, b)));
-
-        List<MealTo> mealTos = new ArrayList<>();
-        meals.forEach(meal ->  {
-            // проверяем находится ли данный отрезок времени в промежутке м/у startTime и endTime
-            if (isBetweenHalfOpen(meal.getTime(), startTime, endTime)) {
-                mealTos.add(createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay));
-            }
-        });
-
-        return mealTos;
-    }
-
-    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
 
         Map<LocalDate, Integer> caloriesSumByDate = meals
                 .stream()
-                // получаем 2 даты и количество каллорий за день
-                .collect(Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories)));
-
+                // collect - представление результатов в виде коллекций и других структур данных
+                .collect(
+                        // (группируем по дате) - получаем 2 даты и количество калорий /список еды с характеристиками/
+                        Collectors.groupingBy(meal1 -> meal1.getDate(),
+                                Collectors.summingInt(meal2 -> meal2.getCalories())));
 
         return meals
                 .stream()
-                .filter(meal ->
-                        isBetweenHalfOpen(meal.getTime(), startTime, endTime))
+                // filter - отфильтровывает записи, возвращает только записи, соответствующие условию
+                .filter(filter)
+                // map -преобразует каждый элемент коллекции во что-то другое и на выходе получить новую коллекцию
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                // переводим stream обратно в коллекцию
                 .collect(Collectors.toList());
 
+    }
+
+    // без фильтрации по времени
+    // дополнительный вспомогательный метод
+    // подает туда минимальное и максимальное время для того, чтобы там не происходила фильтрация
+    public static List<MealTo> getTos(List<Meal> meals, int caloriesPerDay) {
+        return filterByPredicate(meals, caloriesPerDay, meal -> true);
+    }
+
+    // с фильтрацией по времени
+    public static List<MealTo> getFilteredTos(List<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
+        return filterByPredicate(meals, caloriesPerDay, meal -> isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
