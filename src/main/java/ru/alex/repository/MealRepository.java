@@ -11,14 +11,15 @@ import java.util.Collection;
 public interface MealRepository {
 
     // обслуживает оба случая (create and update)
-    // null if not found, when updated
+    // null if updated meal do not belong to userId
     Meal save(Meal meal);
 
-    // false if not found
+    // false if meal do not belong to userId
     boolean delete(int id);
 
-    // null if not found
+    // null if meal do not belong to userId
     Meal get(int id);
 
+    // ORDERED dateTime desc
     Collection<Meal> getAll();
 }

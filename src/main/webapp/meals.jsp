@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<%@ page import="ru.alex.util.TimeUtil" %>
+<%@ page import="ru.alex.util.DateTimeUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -56,7 +56,7 @@
             или пока запрос к текущей странице JSP не будет перенаправлен куда-нибудь еще
             type - дает возможность определить тип переменных скрипта как класс, суперкласс или интерфейс, реализуемый классом--%>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
-                <td><%=TimeUtil.toString(meal.getDateTime())%></td><%--
+                <td><%=DateTimeUtil.toString(meal.getDateTime())%></td><%--
                 td - предназначен для создания одной ячейки таблицы--%>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
