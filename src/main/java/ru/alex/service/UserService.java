@@ -1,5 +1,6 @@
 package ru.alex.service;
 
+import org.springframework.stereotype.Service;
 import ru.alex.model.User;
 import ru.alex.repository.UserRepository;
 
@@ -17,6 +18,7 @@ import static ru.alex.util.ValidationUtil.checkNotFoundWithId;
  Поэтому это у нас отдельный слой
  */
 
+@Service
 public class UserService {
 
     private UserRepository repository;

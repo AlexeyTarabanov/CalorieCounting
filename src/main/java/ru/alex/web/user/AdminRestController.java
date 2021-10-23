@@ -1,5 +1,6 @@
 package ru.alex.web.user;
 
+import org.springframework.stereotype.Controller;
 import ru.alex.model.User;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
  Контроллер администратора
  */
 
+@Controller
 public class AdminRestController extends AbstractUserController {
 
     @Override

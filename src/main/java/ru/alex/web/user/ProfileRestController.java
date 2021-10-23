@@ -1,5 +1,6 @@
 package ru.alex.web.user;
 
+import org.springframework.stereotype.Controller;
 import ru.alex.model.User;
 
 /**
@@ -7,6 +8,7 @@ import ru.alex.model.User;
  Здесь он может посмотреть и модифицировать свои данные
  */
 
+@Controller
 public class ProfileRestController extends AbstractUserController {
 
     @Override
