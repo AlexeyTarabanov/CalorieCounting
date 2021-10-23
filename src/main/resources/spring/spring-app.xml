@@ -5,4 +5,8 @@
 
     <bean class="ru.alex.repository.inmemory.InMemoryUserRepository" id="inMemoryUserRepository"/>
 
+    <bean class="ru.alex.service.UserService">
+        <constructor-arg name="repository" ref="inMemoryUserRepository"/>
+    </bean>
+
 </beans>
