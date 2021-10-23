@@ -1,6 +1,7 @@
-package ru.alex.repository;
+package ru.alex.repository.inmemory;
 
 import ru.alex.model.Meal;
+import ru.alex.repository.MealRepository;
 import ru.alex.util.UserMealsUtil;
 
 import java.util.Collection;
