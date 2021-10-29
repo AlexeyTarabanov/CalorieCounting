@@ -49,7 +49,7 @@ public class MealServlet extends HttpServlet {
 
         // регистрирует сообщение на уровне INFO в соответствии с указанным форматом и аргументом
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        repository.save(meal);
+        repository.save(meal, SecurityUtil.authUserId());
         // переадресовываем на meals
         resp.sendRedirect("meals");
     }
@@ -64,7 +64,7 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(req);
                 log.info("Delete {}", id);
-                repository.delete(id);
+                repository.delete(id, SecurityUtil.authUserId());
                 // переадресовывает запрос на meals
                 resp.sendRedirect("meals");
                 break;
@@ -74,7 +74,7 @@ public class MealServlet extends HttpServlet {
                         // localTime дает время в формате hh:mm:ss, nnn
                         // localTime.truncatedTo(ChronoUnit.MINUTES) - сокращает до минут
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        repository.get(getId(req));
+                        repository.get(getId(req), SecurityUtil.authUserId());
                 // получем meal
                 req.setAttribute("meal", meal);
                 // перенаправляем запрос на /mealForm.jsp
@@ -84,7 +84,7 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 req.setAttribute("meals",
-                        UserMealsUtil.getTos(repository.getAll(), UserMealsUtil.DEFAULT_CALORIES_PER_DAY));
+                        UserMealsUtil.getTos(repository.getAll(SecurityUtil.authUserId()), UserMealsUtil.DEFAULT_CALORIES_PER_DAY));
                 req.getRequestDispatcher("/meals.jsp").forward(req, resp);
                 break;
         }
