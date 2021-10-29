@@ -2,7 +2,9 @@ package ru.alex.repository;
 
 import ru.alex.model.Meal;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 /**
  Здесь будем хранить еду
@@ -22,4 +24,7 @@ public interface MealRepository {
 
     // возвращаем отсортированным по dateTime
     Collection<Meal> getAll(int userId);
+
+    // ORDERED dateTime desc
+    List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);
 }

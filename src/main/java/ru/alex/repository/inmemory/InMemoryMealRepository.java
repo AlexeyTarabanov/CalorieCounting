@@ -4,13 +4,11 @@ import org.springframework.util.CollectionUtils;
 import ru.alex.model.Meal;
 import ru.alex.repository.MealRepository;
 import ru.alex.util.UserMealsUtil;
+import ru.alex.util.Util;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -82,6 +80,16 @@ public class InMemoryMealRepository implements MealRepository {
                 meals.values()
                 .stream()
                 // сортируем по времени в обратном порядке
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        Map<Integer, Meal> meals = usersMealsMap.get(userId);
+        return meals.values()
+                .stream()
+                .filter(meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
