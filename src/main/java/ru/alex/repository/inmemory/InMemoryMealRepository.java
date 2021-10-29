@@ -11,6 +11,7 @@ import java.time.Month;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static ru.alex.repository.inmemory.InMemoryUserRepository.ADMIN_ID;
@@ -73,23 +74,22 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Collection<Meal> getAll(int userId) {
-        Map<Integer, Meal> meals = usersMealsMap.get(userId);
-        // CollectionUtils можно использовать для проверки,
-        // не является ли список пустым
-        return CollectionUtils.isEmpty(meals) ? Collections.emptyList() :
-                meals.values()
-                .stream()
-                // сортируем по времени в обратном порядке
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return filterByPredicate(userId, meal -> true);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return filterByPredicate(userId, meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime));
+    }
+
+    // метод полностью описывает функционал методов getAll() и getBetweenHalfOpen(),
+    // разница последнего только в том , что у него есть фильтрация isBetweenHalfOpen, поэтому
+    // в методе getAll() Predicate всегда будет true (мы ничего не фильтруем)
+    private List<Meal> filterByPredicate(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> meals = usersMealsMap.get(userId);
         return meals.values()
                 .stream()
-                .filter(meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime))
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
