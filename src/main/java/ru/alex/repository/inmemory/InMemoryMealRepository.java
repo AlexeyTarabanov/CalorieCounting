@@ -1,7 +1,6 @@
 package ru.alex.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 import ru.alex.model.Meal;
 import ru.alex.repository.MealRepository;
 import ru.alex.util.UserMealsUtil;
@@ -31,7 +30,7 @@ import static ru.alex.repository.inmemory.InMemoryUserRepository.USER_ID;
 @Repository
 public class InMemoryMealRepository implements MealRepository {
 
-    private final Map<Integer, Map<Integer, Meal>> usersMealsMap = new ConcurrentHashMap<>();
+    private final Map<Integer, InMemoryBaseRepository<Meal>> usersMealsMap = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -44,16 +43,8 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
         // computeIfAbsent - если значения нет, выполняем функцию
         // если этого юзера нет, создаем новый
-        Map<Integer, Meal> meals = usersMealsMap.computeIfAbsent(userId, id -> new ConcurrentHashMap<>(id));
-        if (meal.isNew()) {
-            meal.setId(counter.incrementAndGet());
-            meals.put(meal.getId(), meal);
-            return meal;
-        }
-        // добавит новый элемент в Map, если элемент с таким ключом там отсутствует
-        // в качестве value ему будет присвоен результат выполнения функции mappingFunction.
-        // если элемент уже есть — он не будет перезаписан, а останется на месте.
-        return meals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        InMemoryBaseRepository<Meal> meals = usersMealsMap.computeIfAbsent(userId, uid -> new InMemoryBaseRepository<>());
+        return meals.save(meal);
     }
 
     // теперь все методы будут начинаться с метода get()
@@ -63,17 +54,14 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        Map<Integer, Meal> meals = usersMealsMap.get(userId);
-        if (meals != null) {
-            if (meals.remove(id) != null)
-                return true;
-        }
-        return false;
+        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
+        if (meals != null && meals.delete(id)) return true;
+        else return false;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Map<Integer, Meal> meals = usersMealsMap.get(userId);
+        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
         return meals == null ? null : meals.get(id);
     }
 
@@ -91,11 +79,13 @@ public class InMemoryMealRepository implements MealRepository {
     // разница последнего только в том , что у него есть фильтрация isBetweenHalfOpen, поэтому
     // в методе getAll() Predicate всегда будет true (мы ничего не фильтруем)
     private List<Meal> filterByPredicate(int userId, Predicate<Meal> filter) {
-        Map<Integer, Meal> meals = usersMealsMap.get(userId);
-        return meals.values()
+        InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
+        return meals == null ? Collections.emptyList() :
+                meals.getCollection()
                 .stream()
                 .filter(filter)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                // сортируем по времени в обратном порядке
+                .sorted(Comparator.comparing(Meal::getTime).reversed())
                 .collect(Collectors.toList());
     }
 }
