@@ -1,5 +1,6 @@
 package ru.alex.repository.inmemory;
 
+import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import ru.alex.model.Meal;
 import ru.alex.repository.MealRepository;
@@ -8,7 +9,10 @@ import ru.alex.util.Util;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -24,6 +28,7 @@ import static ru.alex.repository.inmemory.InMemoryUserRepository.USER_ID;
  * достаточно воспользоваться ключом для поиска эл-тов
  */
 
+@Repository
 public class InMemoryMealRepository implements MealRepository {
 
     private final Map<Integer, Map<Integer, Meal>> usersMealsMap = new ConcurrentHashMap<>();
@@ -73,7 +78,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         return filterByPredicate(userId, meal -> true);
     }
 

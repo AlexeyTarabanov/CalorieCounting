@@ -1,4 +1,4 @@
-package ru.alex.model;
+package ru.alex.to;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,7 @@
 package ru.alex.util;
 
 import ru.alex.model.Meal;
-import ru.alex.model.MealTo;
+import ru.alex.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

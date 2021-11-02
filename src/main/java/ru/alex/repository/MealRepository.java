@@ -1,15 +1,16 @@
 package ru.alex.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.alex.model.Meal;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 /**
  Здесь будем хранить еду
  */
 
+@Repository
 public interface MealRepository {
 
     // обслуживает оба случая (create and update)
@@ -23,7 +24,7 @@ public interface MealRepository {
     Meal get(int id, int userId);
 
     // возвращаем отсортированным по dateTime
-    Collection<Meal> getAll(int userId);
+    List<Meal> getAll(int userId);
 
     // ORDERED dateTime desc
     List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);

@@ -49,7 +49,7 @@
         </thead>
         <c:forEach items="${meals}" var="meal"><%--
         forEach - позволяет задать цикл (тег из библиотеки JSTL)--%>
-            <jsp:useBean id="meal" scope="page" type="ru.alex.model.MealTo"/><%--
+            <jsp:useBean id="meal" scope="page" type="ru.alex.to.MealTo"/><%--
             jsp:useBean - объявляем объект класса MealTo
             scope - атрибут, определяющий область видимости ссылки на экземпляр объекта JavaBean
             page - доступен до тех пор, пока не будет отправлен ответ клиенту
