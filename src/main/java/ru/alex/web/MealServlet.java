@@ -16,11 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static ru.alex.util.DateTimeUtil.parseLocalDate;
+import static ru.alex.util.DateTimeUtil.parseLocalTime;
 
 public class MealServlet extends HttpServlet {
 
@@ -95,6 +99,13 @@ public class MealServlet extends HttpServlet {
                 // перенаправляем запрос на /mealForm.jsp
                 req.getRequestDispatcher("/mealForm.jsp").forward(req, resp);
                 break;
+            case "filter":
+                LocalDate startDate = parseLocalDate(req.getParameter("startDate"));
+                LocalDate endDate = parseLocalDate(req.getParameter("endDate"));
+                LocalTime startTime = parseLocalTime(req.getParameter("startTime"));
+                LocalTime endTime = parseLocalTime(req.getParameter("endTime"));
+                req.setAttribute("meals", mealController.getBetween(startDate, startTime, endDate, endTime));
+                req.getRequestDispatcher("/meals.jsp").forward(req, resp);
             case "all":
             default:
                 req.setAttribute("meals",
