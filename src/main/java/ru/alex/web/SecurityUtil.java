@@ -10,9 +10,15 @@ import static ru.alex.util.UserMealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 public class SecurityUtil {
 
+    private static int id = 1;
+
     // id залогиненого юзера
     public static int authUserId() {
-        return 1;
+        return id;
+    }
+
+    public static void setAuthUserId(int id) {
+        SecurityUtil.id = id;
     }
 
     // его норма калорий за день

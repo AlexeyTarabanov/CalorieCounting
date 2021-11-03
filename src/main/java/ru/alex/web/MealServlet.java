@@ -1,20 +1,15 @@
 package ru.alex.web;
 
-import org.slf4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 import ru.alex.model.Meal;
-import ru.alex.repository.inmemory.InMemoryMealRepository;
-import ru.alex.repository.MealRepository;
-import ru.alex.util.UserMealsUtil;
 import ru.alex.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,7 +17,6 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import static ru.alex.util.DateTimeUtil.parseLocalDate;
 import static ru.alex.util.DateTimeUtil.parseLocalTime;
 
