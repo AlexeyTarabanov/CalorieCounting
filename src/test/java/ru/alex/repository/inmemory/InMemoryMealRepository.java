@@ -22,8 +22,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.System.getLogger;
-import static ru.alex.repository.inmemory.InMemoryUserRepository.ADMIN_ID;
-import static ru.alex.repository.inmemory.InMemoryUserRepository.USER_ID;
+import static ru.alex.UserTestData.ADMIN_ID;
+import static ru.alex.UserTestData.USER_ID;
 
 /**
  * Здесь будем хранить данные о еде

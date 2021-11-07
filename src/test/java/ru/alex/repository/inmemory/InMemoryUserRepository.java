@@ -1,6 +1,7 @@
 package ru.alex.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
+import ru.alex.UserTestData;
 import ru.alex.model.User;
 import ru.alex.repository.UserRepository;
 
@@ -8,12 +9,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.alex.UserTestData.admin;
+import static ru.alex.UserTestData.user;
+
 @Repository
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
 
-    // нужны для тестов
-    public static final int USER_ID = 1;
-    public static final int ADMIN_ID = 2;
+    public void init() {
+        // чистим мапу
+        map.clear();
+        put(user);
+        put(admin);
+        counter.getAndSet(UserTestData.ADMIN_ID + 1);
+    }
 
     @Override
     public List<User> getAll() {

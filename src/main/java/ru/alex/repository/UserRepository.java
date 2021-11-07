@@ -1,5 +1,6 @@
 package ru.alex.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.alex.model.User;
 
 import java.util.List;
