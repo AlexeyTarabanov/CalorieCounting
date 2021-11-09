@@ -32,7 +32,7 @@ public class MealServlet extends HttpServlet {
     @Override
     // Вызывается контейнером сервлета, чтобы указать сервлету, что сервлет вводится в эксплуатацию
     public void init() throws ServletException {
-        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
         mealController = springContext.getBean(MealRestController.class);
     }
 
