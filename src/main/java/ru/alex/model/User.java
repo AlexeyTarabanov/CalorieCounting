@@ -1,5 +1,8 @@
 package ru.alex.model;
 
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
@@ -10,7 +13,8 @@ public class User extends AbstractNamedEntity {
 
     private String email;
     private String password;
-    // Enabled переводится как включено, активировано, разрешено – указывает на задействование функции
+    // enabled переводится как включено, активировано, разрешено –
+    // указывает на задействование функции
     private boolean enabled = true;
 
     // абсолютный момент времени (в отличии от приема еды),
@@ -20,20 +24,37 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
+    public User() {
+    }
+
+    // конструктор копирования
+    // замена методу clone()
+    public User(User u) {
+        this(u.id, u.name, u.email, u.password, u.caloriesPerDay, u.enabled, u.registered, u.roles);
+    }
 
     // EnumSet — это реализация наборов Set для работы с типом enum.
     // Он не позволяет пользователю добавлять значения NULL и создает исключение NullPointerException
     // Элементы хранятся в порядке их сохранения
     public User(Integer id, String name, String email, String password, Role role, Role... roles) {
-        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, EnumSet.of(role, roles));
+        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), EnumSet.of(role, roles));
     }
 
-    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Set<Role> roles) {
+    // в конструктор User внес registered и делаю копию roles, чтобы роли нельзя было изменить после инициализации.
+    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles) {
         super(id, name);
-        this.name = name;
         this.email = email;
         this.password = password;
         this.caloriesPerDay = caloriesPerDay;
+        this.enabled = enabled;
+        this.registered = registered;
+        setRoles(roles);
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        // EnumSet.noneOf(Role.class)
+        // создает пустой набор перечислений с указанным типом элемента
+        this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }
 
     public String getEmail() {
