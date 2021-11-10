@@ -1,5 +1,7 @@
 package ru.alex.web;
 
+import ru.alex.model.AbstractBaseEntity;
+
 import static ru.alex.util.UserMealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 /**
@@ -10,7 +12,7 @@ import static ru.alex.util.UserMealsUtil.DEFAULT_CALORIES_PER_DAY;
 
 public class SecurityUtil {
 
-    private static int id = 1;
+    private static int id = AbstractBaseEntity.START_SEQ;
 
     // id залогиненого юзера
     public static int authUserId() {
