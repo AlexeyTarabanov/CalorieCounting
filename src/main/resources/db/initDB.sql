@@ -1,5 +1,6 @@
 -- если есть таблицы - я их дропаю
 DROP TABLE IF EXISTS user_roles;
+DROP TABLE IF EXISTS meals;
 DROP TABLE IF EXISTS users;
 -- дропаю сиквенсы
 -- Sequences в PostgreSQL - генераторы уникальных последовательностей чисел,

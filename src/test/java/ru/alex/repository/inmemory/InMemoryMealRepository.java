@@ -3,6 +3,8 @@ package ru.alex.repository.inmemory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import ru.alex.MealTestData;
+import ru.alex.UserTestData;
 import ru.alex.model.Meal;
 import ru.alex.repository.MealRepository;
 import ru.alex.util.UserMealsUtil;
@@ -41,10 +43,10 @@ public class InMemoryMealRepository implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        UserMealsUtil.meals.forEach(meal -> save(meal, USER_ID));
-        save(new Meal(LocalDateTime.of(2021, Month.OCTOBER, 29, 14, 0), "Админ ланч", 510), ADMIN_ID);
-        save(new Meal(LocalDateTime.of(2021, Month.OCTOBER, 29, 21, 0), "Админ ужин", 1500), ADMIN_ID);
-        save(new Meal(LocalDateTime.of(2021, Month.NOVEMBER, 4, 12, 4), "Админ попил чаек", 100), ADMIN_ID);
+        InMemoryBaseRepository<Meal> userMeals = new InMemoryBaseRepository<>();
+        // заполняем мапу userMeals
+        MealTestData.meals.forEach(meal -> userMeals.put(meal));
+        usersMealsMap.put(UserTestData.USER_ID, userMeals);
     }
 
     @Override
