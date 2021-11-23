@@ -71,9 +71,9 @@ public class MealServiceTest {
         Meal newMeal = getNew();
         newMeal.setId(newId);
 
-        assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(created, newMeal);
         // если еда с этим id чужая или отсутствует - NotFoundException.
-        assertMatch(service.get(newId, USER_ID), newMeal);
+        MEAL_MATCHER.assertMatch(service.get(newId, USER_ID), newMeal);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class MealServiceTest {
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
         // подтверждает, что утверждение выполнено успешно, поскольку данные обоих объектов совпадают
-        assertMatch(actual, adminMeal1);
+        MEAL_MATCHER.assertMatch(actual, adminMeal1);
     }
 
     @Test
@@ -107,13 +107,13 @@ public class MealServiceTest {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
         // подтверждает, что утверждение выполнено успешно, поскольку данные обоих объектов совпадают
-        assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
     @Test
     public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
-        assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
+        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
@@ -121,13 +121,13 @@ public class MealServiceTest {
         // берем всю еду из списка
         // и сравниваем ее с образцом
         // проверяем, что она вернулась строго в этом порядке
-        assertMatch(service.getAll(USER_ID), meals);
+        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
     public void getBetweenInclusive() {
         // тест на получение отфильтрованной еды
-        assertMatch(service.getBetweenInclusive(
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
                 meal3, meal2, meal1);
@@ -136,6 +136,6 @@ public class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() {
         // тест на получение отфильтрованной еды со значением null
-        assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }
 }

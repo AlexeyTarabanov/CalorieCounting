@@ -52,8 +52,8 @@ public class UserServiceTest {
         User newUser = getNew();
         newUser.setId(newId);
         // проверяю результат напрямую (не через getAll)
-        assertMatch(created, newUser);
-        assertMatch(service.get(newId), newUser);
+        USER_MATCHER.assertMatch(created, newUser);
+        USER_MATCHER.assertMatch(service.get(newId), newUser);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class UserServiceTest {
         // user - то, что ожидаем
         // UserTestData - то, что есть на самом деле
         // Assert.assertEquals(user, UserTestData.user);
-        assertMatch(user, UserTestData.user);
+        USER_MATCHER.assertMatch(user, UserTestData.user);
     }
 
     @Test
@@ -94,14 +94,14 @@ public class UserServiceTest {
     @Test
     public void getByEmail() {
         User user = service.getByEmail("admin@gmail.com");
-        assertMatch(user, admin);
+        USER_MATCHER.assertMatch(user, admin);
     }
 
     @Test
     public void update() {
         User updated = getUpdated();
         service.update(updated);
-        assertMatch(service.get(USER_ID), getUpdated());
+        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
     }
 
     @Test
@@ -110,6 +110,6 @@ public class UserServiceTest {
         List<User> all = service.getAll();
         // и сравниваем их с образцом
         // проверяем, что они вернулись строго в этом порядке
-        assertMatch(all, admin, user);
+        USER_MATCHER.assertMatch(all, admin, user);
     }
 }
