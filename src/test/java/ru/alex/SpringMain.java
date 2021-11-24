@@ -23,7 +23,7 @@ public class SpringMain {
         // через класс ClassPathXmlApplicationContext, Spring поднимает свои бины
         // на основе xml конфигурации, которая находится в ClassPath-е
         try (ConfigurableApplicationContext appCtx =
-                     new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
+                     new ClassPathXmlApplicationContext("spring/spring-app.xml", "classpath:spring/inmemory.xml")) {
 
             System.out.println("массив имен бинов, которые находятся в контексте: " +
                     Arrays.toString(appCtx.getBeanDefinitionNames()));

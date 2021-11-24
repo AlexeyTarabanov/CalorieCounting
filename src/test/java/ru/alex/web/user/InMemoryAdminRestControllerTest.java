@@ -31,7 +31,7 @@ public class InMemoryAdminRestControllerTest {
     // а точней в момент запуска тестов(перед всеми тестами @Test).
     public static void beforeClass() {
         // поднимаем контекст Spring'a
-        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml","classpath:spring/inmemory.xml");
         log.info("\n{}\n", Arrays.toString(appCtx.getBeanDefinitionNames()));
         // достаем из контекста Spring'a и сохраняем в статических членах класса теста
         controller = appCtx.getBean(AdminRestController.class);

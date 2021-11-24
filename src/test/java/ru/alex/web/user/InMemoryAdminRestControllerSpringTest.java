@@ -13,7 +13,7 @@ import ru.alex.util.exception.NotFoundException;
 import static ru.alex.UserTestData.NOT_FOUND;
 import static ru.alex.UserTestData.USER_ID;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
+@ContextConfiguration({"classpath:spring/spring-app.xml", "classpath:spring/inmemory.xml"})
 // аннотация определяет метаданные уровня класса,
 // которые используются для определения того, как загружать и настраивать ApplicationContext для интеграционных тестов.
 // В частности, @ContextConfiguration объявляет расположение ресурсов контекста приложения или классы компонентов,
