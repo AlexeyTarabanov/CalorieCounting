@@ -5,6 +5,8 @@ import ru.alex.util.exception.NotFoundException;
 
 public class ValidationUtil {
 
+    private ValidationUtil() {}
+
     public static <T> T checkNotFoundWithId(T object, int id) {
         checkNotFoundWithId(object != null, id);
         return object;
@@ -46,7 +48,7 @@ public class ValidationUtil {
     public static void assureIdConsistent(AbstractBaseEntity entity, int id) {
         if (entity.isNew()) {
             entity.setId(id);
-        } else if (entity.getId() != id) {
+        } else if (entity.id() != id) {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }

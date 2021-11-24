@@ -62,7 +62,7 @@ public class MealServiceTest {
         // при выполнении функционала create/update объекты могут измениться, и мы не можем считать их эталонными.
         // поэтому при сравнении мы создаем эталон еще раз.
         Meal created = service.create(getNew(), USER_ID);
-        int newId = created.getId();
+        int newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
 

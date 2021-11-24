@@ -1,5 +1,7 @@
 package ru.alex.model;
 
+import org.springframework.util.Assert;
+
 import java.util.Objects;
 
 /**
@@ -21,6 +23,12 @@ public abstract class AbstractBaseEntity {
     }
 
     public Integer getId() {
+        return id;
+    }
+
+    public int id() {
+        // утверждают, что объект не равен нулю
+        Assert.notNull(id, "Entity must have id");
         return id;
     }
 

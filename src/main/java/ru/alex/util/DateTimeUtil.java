@@ -17,6 +17,8 @@ public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    private DateTimeUtil() {}
+
     // atStartOfDay()
     // объединяет эту дату со временем полуночи, чтобы создать LocalDateTime в начале этой даты
     public static LocalDateTime atStartOfDayOrMin(LocalDate localDate) {

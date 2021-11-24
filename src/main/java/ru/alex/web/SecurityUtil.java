@@ -14,6 +14,8 @@ public class SecurityUtil {
 
     private static int id = AbstractBaseEntity.START_SEQ;
 
+    private SecurityUtil() {}
+
     // id залогиненого юзера
     public static int authUserId() {
         return id;

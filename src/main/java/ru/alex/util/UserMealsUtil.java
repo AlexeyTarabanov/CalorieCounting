@@ -17,6 +17,8 @@ public class UserMealsUtil {
 
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
+    private UserMealsUtil() {}
+
     public static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
 
         Map<LocalDate, Integer> caloriesSumByDate = meals

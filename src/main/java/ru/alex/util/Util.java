@@ -4,6 +4,8 @@ import org.springframework.lang.Nullable;
 
 public class Util {
 
+    private Util() {}
+
     // @Nullable
     // дает понять, что метод принимает значения null
     // и что если вы переопределите метод, вы также должны принять значения null

@@ -41,7 +41,7 @@ public class UserServiceTest {
     // поэтому при сравнении мы создаем эталон еще раз.
     public void create() {
         User created = service.create(getNew());
-        Integer newId = created.getId();
+        int newId = created.id();
         User newUser = getNew();
         newUser.setId(newId);
         // проверяю результат напрямую (не через getAll)
